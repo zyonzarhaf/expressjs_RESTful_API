@@ -1,0 +1,24 @@
+{
+  "name": "expressjs-RESTful-api",
+  "version": "1.0.0",
+  "description": "Express.js server application that I'm writing to help me with boilerplate code when building RESTful APIs",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "zyon zarhaf",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-validator": "^7.1.0",
+    "http-status-codes": "^2.3.0",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.1",
+    "morgan": "^1.10.0",
+    "uuid": "^10.0.0",
+    "validator": "^13.12.0"
+  }
+}
