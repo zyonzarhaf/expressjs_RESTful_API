@@ -74,30 +74,33 @@ const login = tryCatchWrapper(async function (req, res, next) {
         });
     }
 
-    jwt.sign(
-        {
-            sub: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            role: user.role,
-            iat: Date.now()
-        },
-        process.env.JWT_SECRET,
-        {
-            expiresIn: '3d'
-        },
-        (err, token) => {
-            if (err) throw new APIError({
-                message: 'Failed to sign the authentication token.'
-            });
+    const payload = {
+        sub: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        iat: Date.now()
+    };
 
-            res.send({ token });
-        }
-    );
+    function jwtSignAsync (payload = {}, secret, options = {}) {
+        return new Promise((resolve, reject) => {
+            jwt.sign(payload, secret, options, (err, token) => {
+                if (err) { 
+                    reject(err);
+                } else {
+                    resolve(token);
+                }
+            });
+        });
+    }
+
+    const accessToken = await jwtSignAsync(payload, process.env.JWT_SECRET, { expiresIn: '60min' });
+    const refreshToken = await jwtSignAsync(payload, process.env.JWT_SECRET);
+
+    res.json({ accessToken, refreshToken });
 });
 
 const logout = tryCatchWrapper(function (req, res, next) {
-    console.log('hello from logout');
     res.json({ success: true });
 })
 
