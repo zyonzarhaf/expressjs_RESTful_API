@@ -1,5 +1,5 @@
 import * as User from '../../models/user.js';
-import jwt from 'jsonwebtoken';
+import jwtSignAsync from '../../utils/jwtSignAsync.js';
 import tryCatchWrapper from '../../utils/tryCatchWrapper.js';
 import httpStatus from 'http-status-codes';
 import APIError from '../../errors/APIError.js';
@@ -82,18 +82,6 @@ const login = tryCatchWrapper(async function (req, res, next) {
         iat: Date.now()
     };
 
-    function jwtSignAsync (payload = {}, secret, options = {}) {
-        return new Promise((resolve, reject) => {
-            jwt.sign(payload, secret, options, (err, token) => {
-                if (err) { 
-                    reject(err);
-                } else {
-                    resolve(token);
-                }
-            });
-        });
-    }
-
     const accessToken = await jwtSignAsync(payload, process.env.JWT_SECRET, { expiresIn: '60min' });
     const refreshToken = await jwtSignAsync(payload, process.env.JWT_REFRESH_SECRET);
 
@@ -124,18 +112,6 @@ const refreshAccessToken = tryCatchWrapper(async function (req, res, next) {
         message: 'invalid token',
         status: httpStatus.FORBIDDEN
     });
-
-    function jwtSignAsync (payload = {}, secret, options = {}) {
-        return new Promise((resolve, reject) => {
-            jwt.sign(payload, secret, options, (err, token) => {
-                if (err) { 
-                    reject(err);
-                } else {
-                    resolve(token);
-                }
-            });
-        });
-    }
 
     const payload = {
         sub: user.id,
