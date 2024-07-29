@@ -103,9 +103,12 @@ const login = tryCatchWrapper(async function (req, res, next) {
     res.json({ accessToken, refreshToken });
 });
 
-const logout = tryCatchWrapper(function (req, res, next) {
+const logout = tryCatchWrapper(async function (req, res, next) {
+    const { id } = req.user;
+    await User.update({ _id: id }, { refreshTokens: [] });
+
     res.json({ success: true });
-})
+});
 
 export { 
     register,
