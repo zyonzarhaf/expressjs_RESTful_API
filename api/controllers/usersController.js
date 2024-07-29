@@ -95,7 +95,7 @@ const login = tryCatchWrapper(async function (req, res, next) {
     }
 
     const accessToken = await jwtSignAsync(payload, process.env.JWT_SECRET, { expiresIn: '60min' });
-    const refreshToken = await jwtSignAsync(payload, process.env.JWT_SECRET);
+    const refreshToken = await jwtSignAsync(payload, process.env.JWT_REFRESH_SECRET);
 
     user.refreshTokens.push(refreshToken); 
     await user.save();
@@ -110,6 +110,46 @@ const logout = tryCatchWrapper(async function (req, res, next) {
     res.json({ success: true });
 });
 
+const refreshAccessToken = tryCatchWrapper(async function (req, res, next) {
+    const { token } = req.body;
+
+    if (!token) throw new APIError({
+        message: 'missing token',
+        status: httpStatus.UNAUTHORIZED
+    });
+
+    const user = await User.get({ refreshTokens: token });
+
+    if (!user) throw new APIError({
+        message: 'invalid token',
+        status: httpStatus.FORBIDDEN
+    });
+
+    function jwtSignAsync (payload = {}, secret, options = {}) {
+        return new Promise((resolve, reject) => {
+            jwt.sign(payload, secret, options, (err, token) => {
+                if (err) { 
+                    reject(err);
+                } else {
+                    resolve(token);
+                }
+            });
+        });
+    }
+
+    const payload = {
+        sub: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        iat: Date.now()
+    };
+
+    const accessToken = jwtSignAsync(payload, process.env.JWT_SECRET, { expiresIn: '60min' });
+
+    res.json({ accessToken });
+});
+
 export { 
     register,
     update,
@@ -117,5 +157,6 @@ export {
     get,
     list,
     login,
-    logout
+    logout,
+    refreshAccessToken
 };

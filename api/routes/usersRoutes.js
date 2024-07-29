@@ -12,14 +12,12 @@ import {
     remove,
     register,
     login,
-    logout
+    logout,
+    refreshAccessToken
 } from '../controllers/usersController.js';
 
 const router = express.Router();
 
-// CHANGED: merged the ensureUser and ensureAdmin into a single middleware
-// refactor validation middleware
-// changed the import statements
 router
 .route('/users/:userId')
 .get(verifyToken, ensureCredentials, get)
@@ -30,5 +28,6 @@ router.get('/users', verifyToken, ensureCredentials, list);
 router.post('/register', validate(registerRules), register);
 router.post('/login', validate(loginRules), login);
 router.delete('/logout', logout);
+router.post('/refresh_token', refreshAccessToken);
 
 export default router;
