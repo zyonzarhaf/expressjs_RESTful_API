@@ -125,18 +125,14 @@ userSchema.post('findOneAndUpdate', async function () {
 * Evita o retorno de dados mais sensíveis,
 * como a senha e o salt do usuário.
 */ 
+
 userSchema.method('thin', function () {
-    const document = {
-        id,
-        firstName,
-        lastName,
-        email,
-        role
-    };
+  const result = {};
+  const fields = ['id', 'firstName', 'lastName', 'email', 'role'];
 
-    Object.keys(document).forEach(key => document[key] = this[key]);
+  fields.forEach(field => result[field] = this[field]);
 
-    return document;
+  return result;
 });
 
 const User = mongoose.model('User', userSchema);
