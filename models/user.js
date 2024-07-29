@@ -10,6 +10,7 @@ const userSchema = mongoose.Schema({
     email: emailSchema(),
     password: passwordSchema(),
     salt: { type: String, required: false },
+    refreshTokens: { type: [String], trim: true, unique: true },
     role: { 
         type: String,
         required: true,

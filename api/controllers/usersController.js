@@ -97,6 +97,9 @@ const login = tryCatchWrapper(async function (req, res, next) {
     const accessToken = await jwtSignAsync(payload, process.env.JWT_SECRET, { expiresIn: '60min' });
     const refreshToken = await jwtSignAsync(payload, process.env.JWT_SECRET);
 
+    user.refreshTokens.push(refreshToken); 
+    await user.save();
+
     res.json({ accessToken, refreshToken });
 });
 
